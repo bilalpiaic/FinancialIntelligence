@@ -7,6 +7,7 @@ import { ProtectedRoute } from "@/lib/protected-route";
 import Sidebar from "@/components/layout/sidebar";
 import Header from "@/components/layout/header";
 import Dashboard from "@/pages/dashboard";
+import ChartOfAccounts from "@/components/accounts/chart-of-accounts";
 import Vouchers from "@/pages/vouchers";
 import Reports from "@/pages/reports";
 import Parties from "@/pages/parties";
@@ -24,6 +25,7 @@ function Router() {
           <Switch>
             <Route path="/auth" component={AuthPage} />
             <ProtectedRoute path="/" component={Dashboard} />
+            <ProtectedRoute path="/accounts" component={ChartOfAccounts} />
             <ProtectedRoute path="/vouchers" component={Vouchers} />
             <ProtectedRoute path="/reports" component={Reports} />
             <ProtectedRoute path="/parties" component={Parties} />

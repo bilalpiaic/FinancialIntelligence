@@ -21,21 +21,41 @@ export const insertUserSchema = createInsertSchema(users).pick({
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
-// Voucher types
-export const VOUCHER_TYPES = ["JOURNAL", "RECEIPT", "PAYMENT"] as const;
-export type VoucherType = typeof VOUCHER_TYPES[number];
+// Account types and categories
+export const ACCOUNT_TYPES = [
+  // Balance Sheet
+  "ASSET",
+  "LIABILITY",
+  "EQUITY",
+  // Profit & Loss
+  "INCOME",
+  "EXPENSE"
+] as const;
 
-// Account types
-export const ACCOUNT_TYPES = ["ASSET", "LIABILITY", "INCOME", "EXPENSE"] as const;
+export const ACCOUNT_CATEGORIES = [
+  "BALANCE_SHEET",
+  "PROFIT_LOSS"
+] as const;
+
 export type AccountType = typeof ACCOUNT_TYPES[number];
+export type AccountCategory = typeof ACCOUNT_CATEGORIES[number];
 
 export const accounts = pgTable("accounts", {
   id: serial("id").primaryKey(),
   code: text("code").notNull().unique(),
   name: text("name").notNull(),
   type: text("type", { enum: ACCOUNT_TYPES }).notNull(),
+  category: text("category", { enum: ACCOUNT_CATEGORIES }).notNull(),
+  parentId: serial("parent_id").references(() => accounts.id),
+  level: numeric("level").notNull().default("1"),
   balance: numeric("balance").notNull().default("0"),
+  isActive: boolean("is_active").notNull().default(true),
 });
+
+// Voucher types
+export const VOUCHER_TYPES = ["JOURNAL", "RECEIPT", "PAYMENT"] as const;
+export type VoucherType = typeof VOUCHER_TYPES[number];
+
 
 export const vouchers = pgTable("vouchers", {
   id: serial("id").primaryKey(),

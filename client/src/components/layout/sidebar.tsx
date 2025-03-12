@@ -6,10 +6,12 @@ import {
   PieChart,
   Users,
   Heart,
+  BookOpen,
 } from "lucide-react";
 
 const navigation = [
   { name: "Dashboard", href: "/", icon: LayoutDashboard },
+  { name: "Chart of Accounts", href: "/accounts", icon: BookOpen },
   { name: "Vouchers", href: "/vouchers", icon: FileText },
   { name: "Reports", href: "/reports", icon: PieChart },
   { name: "Parties", href: "/parties", icon: Users },
@@ -22,7 +24,7 @@ export default function Sidebar() {
   return (
     <div className="fixed inset-y-0 left-0 w-64 bg-sidebar border-r">
       <div className="flex h-16 items-center px-6">
-        <h1 className="text-xl font-bold text-sidebar-foreground">Finance App</h1>
+        <h1 className="text-xl font-bold text-sidebar-foreground">Chiniot Dialysis & Medical Centre</h1>
       </div>
       <nav className="px-3 py-4">
         {navigation.map((item) => {
