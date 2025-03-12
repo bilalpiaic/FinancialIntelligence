@@ -1,4 +1,10 @@
 import {
+  accounts,
+  vouchers,
+  voucherEntries,
+  parties,
+  donors,
+  users,
   type Account,
   type InsertAccount,
   type Voucher,
@@ -12,6 +18,8 @@ import {
   type User,
   type InsertUser,
 } from "@shared/schema";
+import { db } from "./db";
+import { eq } from "drizzle-orm";
 
 export interface IStorage {
   // Accounts
@@ -48,158 +56,134 @@ export interface IStorage {
   createUser(user: InsertUser): Promise<User>;
 }
 
-export class MemStorage implements IStorage {
-  private accounts: Map<number, Account>;
-  private vouchers: Map<number, Voucher>;
-  private voucherEntries: Map<number, VoucherEntry>;
-  private parties: Map<number, Party>;
-  private donors: Map<number, Donor>;
-  private users: Map<number, User>;
-  private currentId: { [key: string]: number };
-
-  constructor() {
-    this.accounts = new Map();
-    this.vouchers = new Map();
-    this.voucherEntries = new Map();
-    this.parties = new Map();
-    this.donors = new Map();
-    this.users = new Map();
-    this.currentId = {
-      account: 1,
-      voucher: 1,
-      voucherEntry: 1,
-      party: 1,
-      donor: 1,
-      user: 1,
-    };
-  }
-
+export class DatabaseStorage implements IStorage {
   // Accounts
   async getAccounts(): Promise<Account[]> {
-    return Array.from(this.accounts.values());
+    return await db.select().from(accounts);
   }
 
   async getAccount(id: number): Promise<Account | undefined> {
-    return this.accounts.get(id);
+    const [account] = await db.select().from(accounts).where(eq(accounts.id, id));
+    return account;
   }
 
   async createAccount(account: InsertAccount): Promise<Account> {
-    const id = this.currentId.account++;
-    const newAccount = { ...account, id };
-    this.accounts.set(id, newAccount);
+    const [newAccount] = await db.insert(accounts).values(account).returning();
     return newAccount;
   }
 
   async updateAccount(id: number, account: Partial<Account>): Promise<Account> {
-    const existing = this.accounts.get(id);
-    if (!existing) throw new Error("Account not found");
-    const updated = { ...existing, ...account };
-    this.accounts.set(id, updated);
+    const [updated] = await db
+      .update(accounts)
+      .set(account)
+      .where(eq(accounts.id, id))
+      .returning();
     return updated;
   }
 
   // Vouchers
   async getVouchers(): Promise<Voucher[]> {
-    return Array.from(this.vouchers.values());
+    return await db.select().from(vouchers);
   }
 
   async getVoucher(id: number): Promise<Voucher | undefined> {
-    return this.vouchers.get(id);
+    const [voucher] = await db.select().from(vouchers).where(eq(vouchers.id, id));
+    return voucher;
   }
 
   async createVoucher(voucher: InsertVoucher): Promise<Voucher> {
-    const id = this.currentId.voucher++;
-    const newVoucher = { ...voucher, id };
-    this.vouchers.set(id, newVoucher);
+    const [newVoucher] = await db.insert(vouchers).values(voucher).returning();
     return newVoucher;
   }
 
   async updateVoucher(id: number, voucher: Partial<Voucher>): Promise<Voucher> {
-    const existing = this.vouchers.get(id);
-    if (!existing) throw new Error("Voucher not found");
-    const updated = { ...existing, ...voucher };
-    this.vouchers.set(id, updated);
+    const [updated] = await db
+      .update(vouchers)
+      .set(voucher)
+      .where(eq(vouchers.id, id))
+      .returning();
     return updated;
   }
 
   // Voucher Entries
   async getVoucherEntries(voucherId: number): Promise<VoucherEntry[]> {
-    return Array.from(this.voucherEntries.values()).filter(
-      (entry) => entry.voucherId === voucherId
-    );
+    return await db
+      .select()
+      .from(voucherEntries)
+      .where(eq(voucherEntries.voucherId, voucherId));
   }
 
   async createVoucherEntry(entry: InsertVoucherEntry): Promise<VoucherEntry> {
-    const id = this.currentId.voucherEntry++;
-    const newEntry = { ...entry, id };
-    this.voucherEntries.set(id, newEntry);
+    const [newEntry] = await db.insert(voucherEntries).values(entry).returning();
     return newEntry;
   }
 
   // Parties
   async getParties(): Promise<Party[]> {
-    return Array.from(this.parties.values());
+    return await db.select().from(parties);
   }
 
   async getParty(id: number): Promise<Party | undefined> {
-    return this.parties.get(id);
+    const [party] = await db.select().from(parties).where(eq(parties.id, id));
+    return party;
   }
 
   async createParty(party: InsertParty): Promise<Party> {
-    const id = this.currentId.party++;
-    const newParty = { ...party, id };
-    this.parties.set(id, newParty);
+    const [newParty] = await db.insert(parties).values(party).returning();
     return newParty;
   }
 
   async updateParty(id: number, party: Partial<Party>): Promise<Party> {
-    const existing = this.parties.get(id);
-    if (!existing) throw new Error("Party not found");
-    const updated = { ...existing, ...party };
-    this.parties.set(id, updated);
+    const [updated] = await db
+      .update(parties)
+      .set(party)
+      .where(eq(parties.id, id))
+      .returning();
     return updated;
   }
 
   // Donors
   async getDonors(): Promise<Donor[]> {
-    return Array.from(this.donors.values());
+    return await db.select().from(donors);
   }
 
   async getDonor(id: number): Promise<Donor | undefined> {
-    return this.donors.get(id);
+    const [donor] = await db.select().from(donors).where(eq(donors.id, id));
+    return donor;
   }
 
   async createDonor(donor: InsertDonor): Promise<Donor> {
-    const id = this.currentId.donor++;
-    const newDonor = { ...donor, id };
-    this.donors.set(id, newDonor);
+    const [newDonor] = await db.insert(donors).values(donor).returning();
     return newDonor;
   }
 
   async updateDonor(id: number, donor: Partial<Donor>): Promise<Donor> {
-    const existing = this.donors.get(id);
-    if (!existing) throw new Error("Donor not found");
-    const updated = { ...existing, ...donor };
-    this.donors.set(id, updated);
+    const [updated] = await db
+      .update(donors)
+      .set(donor)
+      .where(eq(donors.id, id))
+      .returning();
     return updated;
   }
 
+  // Users
   async getUser(id: number): Promise<User | undefined> {
-    return this.users.get(id);
+    const [user] = await db.select().from(users).where(eq(users.id, id));
+    return user;
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(
-      (user) => user.username === username
-    );
+    const [user] = await db
+      .select()
+      .from(users)
+      .where(eq(users.username, username));
+    return user;
   }
 
-  async createUser(insertUser: InsertUser): Promise<User> {
-    const id = this.currentId.user++;
-    const user = { ...insertUser, id, createdAt: new Date(), role: "user" };
-    this.users.set(id, user);
-    return user;
+  async createUser(user: InsertUser): Promise<User> {
+    const [newUser] = await db.insert(users).values(user).returning();
+    return newUser;
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new DatabaseStorage();
