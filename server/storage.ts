@@ -9,6 +9,8 @@ import {
   type InsertParty,
   type Donor,
   type InsertDonor,
+  type User,
+  type InsertUser,
 } from "@shared/schema";
 
 export interface IStorage {
@@ -39,6 +41,11 @@ export interface IStorage {
   getDonor(id: number): Promise<Donor | undefined>;
   createDonor(donor: InsertDonor): Promise<Donor>;
   updateDonor(id: number, donor: Partial<Donor>): Promise<Donor>;
+
+  // User methods
+  getUser(id: number): Promise<User | undefined>;
+  getUserByUsername(username: string): Promise<User | undefined>;
+  createUser(user: InsertUser): Promise<User>;
 }
 
 export class MemStorage implements IStorage {
@@ -47,6 +54,7 @@ export class MemStorage implements IStorage {
   private voucherEntries: Map<number, VoucherEntry>;
   private parties: Map<number, Party>;
   private donors: Map<number, Donor>;
+  private users: Map<number, User>;
   private currentId: { [key: string]: number };
 
   constructor() {
@@ -55,12 +63,14 @@ export class MemStorage implements IStorage {
     this.voucherEntries = new Map();
     this.parties = new Map();
     this.donors = new Map();
+    this.users = new Map();
     this.currentId = {
       account: 1,
       voucher: 1,
       voucherEntry: 1,
       party: 1,
       donor: 1,
+      user: 1,
     };
   }
 
@@ -172,6 +182,23 @@ export class MemStorage implements IStorage {
     const updated = { ...existing, ...donor };
     this.donors.set(id, updated);
     return updated;
+  }
+
+  async getUser(id: number): Promise<User | undefined> {
+    return this.users.get(id);
+  }
+
+  async getUserByUsername(username: string): Promise<User | undefined> {
+    return Array.from(this.users.values()).find(
+      (user) => user.username === username
+    );
+  }
+
+  async createUser(insertUser: InsertUser): Promise<User> {
+    const id = this.currentId.user++;
+    const user = { ...insertUser, id, createdAt: new Date(), role: "user" };
+    this.users.set(id, user);
+    return user;
   }
 }
 
