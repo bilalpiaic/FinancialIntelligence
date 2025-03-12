@@ -96,6 +96,10 @@ export default function ChartOfAccounts() {
   const balanceSheetAccounts = accounts?.filter(a => a.category === "BALANCE_SHEET") || [];
   const profitLossAccounts = accounts?.filter(a => a.category === "PROFIT_LOSS") || [];
 
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">

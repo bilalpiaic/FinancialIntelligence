@@ -50,7 +50,7 @@ export interface IStorage {
   createDonor(donor: InsertDonor): Promise<Donor>;
   updateDonor(id: number, donor: Partial<Donor>): Promise<Donor>;
 
-  // User methods
+  // Users
   getUser(id: number): Promise<User | undefined>;
   getUserByUsername(username: string): Promise<User | undefined>;
   createUser(user: InsertUser): Promise<User>;
@@ -59,17 +59,18 @@ export interface IStorage {
 export class DatabaseStorage implements IStorage {
   // Accounts
   async getAccounts(): Promise<Account[]> {
-    return await db.select().from(accounts);
+    const result = await db.select().from(accounts);
+    return result as Account[];
   }
 
   async getAccount(id: number): Promise<Account | undefined> {
     const [account] = await db.select().from(accounts).where(eq(accounts.id, id));
-    return account;
+    return account as Account | undefined;
   }
 
   async createAccount(account: InsertAccount): Promise<Account> {
     const [newAccount] = await db.insert(accounts).values(account).returning();
-    return newAccount;
+    return newAccount as Account;
   }
 
   async updateAccount(id: number, account: Partial<Account>): Promise<Account> {
@@ -78,7 +79,7 @@ export class DatabaseStorage implements IStorage {
       .set(account)
       .where(eq(accounts.id, id))
       .returning();
-    return updated;
+    return updated as Account;
   }
 
   // Vouchers
