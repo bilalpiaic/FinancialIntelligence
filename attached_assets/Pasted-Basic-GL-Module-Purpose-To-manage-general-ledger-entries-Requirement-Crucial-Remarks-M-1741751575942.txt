@@ -1,0 +1,233 @@
+Basic GL Module
+
+Purpose: To manage general ledger entries.
+
+Requirement: Crucial.
+
+Remarks: Mr. Fayyaz has noted this as crucial.
+
+JOURNAL VOUCHER
+
+| Date       | Voucher No. | Description           | Debit Account  | Credit Account | Amount |
+|------------|-------------|-----------------------|----------------|----------------|--------|
+| YYYY-MM-DD | JV0001      | Salary Payment        | Salaries       | Bank           | 1000.00|
+| YYYY-MM-DD | JV0002      | Rent Payment          | Rent Expense   | Cash           | 500.00 |
+
+RECEIPT VOUCHER
+
+| Date       | Voucher No. | Payer          | Description        | Amount | Account Code |
+|------------|-------------|----------------|--------------------|--------|--------------|
+| YYYY-MM-DD | RV0001      | Waseem     | Donation           | 200.00 | 4010         |
+| YYYY-MM-DD | RV0002      | ABC Foundation | Grant              | 500.00 | 4020         |
+
+PAYMENT VOUCHER
+
+| Date       | Voucher No. | Payee          | Description        | Amount | Account Code |
+|------------|-------------|----------------|--------------------|--------|--------------|
+| YYYY-MM-DD | PV0001      | Ahmad Furniture       | Office Supplies    | 100.00 | 5010         |
+| YYYY-MM-DD | PV0002      | XYZ Services   | Cleaning Services  | 150.00 | 5020         |
+
+Party-wise Accounts Receivable and Payable
+
+Purpose: To track payments and balances.
+
+Requirement: Important.
+
+Remarks: A sample is needed to align with your pattern.
+
+  Party-wise Accounts Receivable and Payable  
+
+| Party Name    | Invoice No. | Date       | Description       | Amount | Status   |
+|---------------|-------------|------------|-------------------|--------|----------|
+| ABC Company   | INV001      | YYYY-MM-DD | Services Rendered | 300.00 | Unpaid   |
+| XYZ Supplier  | INV002      | YYYY-MM-DD | Goods Purchased   | 400.00 | Paid     |
+
+Monthly Expense Summary
+
+Purpose: To provide a monthly overview of expenses.
+
+Requirement: Monthly requirement.
+
+Remarks: A sample is needed to align with your pattern.
+
+  Monthly Expense Summary  
+
+| Category            | Description        | Amount |
+|---------------------|--------------------|--------|
+| Office Supplies     | Stationery         | 100.00 |
+| Utilities           | Electricity        | 200.00 |
+| Transportation      | Fuel               | 150.00 |
+
+Income Statement & Balance Sheet
+
+Purpose: To report financial performance and position.
+
+Requirement: Yearly or monthly.
+
+Remarks: A sample is needed to align with your pattern.
+
+  Balance Sheet  
+
+| Assets              | Amount   | Liabilities        | Amount   |
+|---------------------|----------|--------------------|----------|
+| Cash                | 3000.00  | Accounts Payable   | 800.00   |
+| Inventory           | 1500.00  | Long-Term Loans    | 1200.00  |
+| Equipment           | 2500.00  |                    |          |
+| Total Assets        | 7000.00  | Total Liabilities  | 2000.00  |
+|---------------------|----------|--------------------|----------|
+| Net Assets          | 5000.00  |
+
+  Income Statement  
+
+| Description         | Amount   |
+|---------------------|----------|
+| Revenue             | 2000.00  |
+| Donations           | 1000.00  |
+| Grants              | 500.00   |
+| Total Income        | 3500.00  |
+|---------------------|----------|
+| Expenses            |          |
+| Salaries            | 1500.00  |
+| Rent                | 700.00   |
+| Supplies            | 300.00   |
+| Total Expenses      | 2500.00  |
+|---------------------|----------|
+| Net Income          | 1000.00  |
+
+Fixed Asset Register
+
+Purpose: To maintain records of fixed assets.
+
+Requirement: Yearly.
+
+Remarks: Guidance needed on how to consolidate into one report.
+
+  Fixed Asset Register  
+
+| Asset Name         | Acquisition Date | Cost    | Depreciation | Net Book Value |
+|--------------------|------------------|---------|--------------|----------------|
+| Office Furniture   | YYYY-MM-DD       | 1000.00 | 100.00       | 900.00         |
+| Computer Equipment | YYYY-MM-DD       | 1500.00 | 150.00       | 1350.00        |
+
+Payroll Register
+
+Purpose: To manage payroll details.
+
+Requirement: Monthly.
+
+Remarks: Advice needed on managing attendance.
+
+  Payroll Register  
+
+| Employee Name      | Employee ID | Month      | Salary  | Deductions | Net Salary |
+|--------------------|-------------|------------|---------|------------|------------|
+| Ahmad           | EMP001      | January    | 1000.00 | 100.00     | 900.00     |
+| Afzal         | EMP002      | January    | 1200.00 | 150.00     | 1050.00    |
+
+Bank Reconciliation and Check Printing Tool
+
+Purpose: To reconcile bank statements and print checks.
+
+Requirement: Monthly.
+
+Remarks: A sample is needed to align with your pattern.
+
+  Bank Reconciliation  
+
+| Date       | Transaction Details  | Debit  | Credit | Balance  |
+|------------|----------------------|--------|--------|----------|
+| YYYY-MM-DD | Opening Balance      |        |        | 5000.00  |
+| YYYY-MM-DD | Deposit              | 1000.00|        | 6000.00  |
+| YYYY-MM-DD | Payment              |        | 500.00 | 5500.00  |
+
+Data Upload from Excel
+
+Purpose: To upload past transactions into the software.
+
+Requirement: Tool.
+
+Remarks: Please provide your data in Excel to verify its appropriateness with the software.
+
+  Data Upload from Excel  
+
+| Date       | Description     | Debit Account  | Credit Account | Amount |
+|------------|-----------------|----------------|----------------|--------|
+| YYYY-MM-DD | Opening Balance | Cash           | Retained Earnings| 5000.00|
+
+Ledgers and Trial Balance Export to Excel
+
+Purpose: To export ledgers and trial balances.
+
+Requirement: Tool.
+
+Remarks: This is required on a need basis.
+
+  Ledgers and Trial Balance Export to Excel  
+
+| Account Name | Debit  | Credit |
+|--------------|--------|--------|
+| Cash         | 1000.00|        |
+| Revenue      |        | 1000.00|
+
+Additionally, for a comprehensive accounting and reporting system tailored for a non-profit organization, I recommend the following modules:
+
+Donor Management Module
+
+Purpose: To track donations, donor information, and generate donation receipts.
+
+  Donor Management Module  
+
+| Donor Name   | Contact Info    | Donation Date | Amount | Receipt No. |
+|--------------|-----------------|---------------|--------|-------------|
+| Abdullah     | abdullah@example.com | YYYY-MM-DD  | 100.00 | R001        |
+
+Grant Management Module
+
+Purpose: To manage and report on grants received and their utilization.
+
+  Grant Management Module  
+
+| Grant Name   | Source          | Date Received | Amount | Utilization |
+|--------------|-----------------|---------------|--------|-------------|
+| Health Grant | ABC Foundation  | YYYY-MM-DD    | 500.00 | 300.00      |
+
+Expense Tracking
+
+Purpose: Detailed tracking of expenses by project or program.
+
+  Expense Tracking  
+
+| Project Name | Expense Category | Amount | Date       |
+|--------------|------------------|--------|------------|
+| Project A    | Supplies         | 100.00 | YYYY-MM-DD |
+
+Fund Accounting
+
+Purpose: To manage and report on different funds separately.
+
+  Fund Accounting  
+
+| Fund Name      | Starting Balance | Contributions | Expenses | Ending Balance |
+|----------------|------------------|---------------|----------|----------------|
+| General Fund   | 2000.00          | 1000.00       | 1500.00  | 1500.00        |
+
+Budgeting and Forecasting
+
+Purpose: Tools to create, manage, and compare budgets versus actuals.
+
+  Budgeting and Forecasting  
+
+| Category       | Budgeted Amount | Actual Amount | Variance |
+|----------------|-----------------|---------------|----------|
+| Salaries       | 1200.00         | 1150.00       | 50.00    |
+
+Compliance Reporting
+
+Purpose: To ensure adherence to regulatory requirements and prepare necessary compliance reports.
+
+  Compliance Reporting  
+
+| Report Name             | Frequency  | Description                 |
+|-------------------------|------------|-----------------------------|
+| Financial Compliance    | Quarterly  | Reporting on financial compliance with regulations |
+| Tax Compliance          | Yearly     | Reporting on tax adherence   |
