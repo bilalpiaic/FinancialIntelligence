@@ -7,77 +7,122 @@ import { z } from "zod";
 export async function registerRoutes(app: Express) {
   // Accounts
   app.get("/api/accounts", async (req, res) => {
-    const accounts = await storage.getAccounts();
-    res.json(accounts);
+    try {
+      const accounts = await storage.getAccounts();
+      res.json(accounts);
+    } catch (error) {
+      console.error('Error getting accounts:', error);
+      res.status(500).json({ message: "Failed to get accounts" });
+    }
   });
 
   app.post("/api/accounts", async (req, res) => {
-    const parsed = insertAccountSchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ error: parsed.error });
-      return;
+    try {
+      const parsed = insertAccountSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ error: parsed.error });
+        return;
+      }
+      const account = await storage.createAccount(parsed.data);
+      res.json(account);
+    } catch (error) {
+      console.error('Error creating account:', error);
+      res.status(500).json({ message: "Failed to create account" });
     }
-    const account = await storage.createAccount(parsed.data);
-    res.json(account);
   });
 
   // Vouchers
   app.get("/api/vouchers", async (req, res) => {
-    const vouchers = await storage.getVouchers();
-    res.json(vouchers);
+    try {
+      const vouchers = await storage.getVouchers();
+      res.json(vouchers);
+    } catch (error) {
+      console.error('Error getting vouchers:', error);
+      res.status(500).json({ message: "Failed to get vouchers" });
+    }
   });
 
   app.get("/api/vouchers/:id", async (req, res) => {
-    const id = parseInt(req.params.id);
-    const voucher = await storage.getVoucher(id);
-    if (!voucher) {
-      res.status(404).json({ error: "Voucher not found" });
-      return;
+    try {
+      const id = parseInt(req.params.id);
+      const voucher = await storage.getVoucher(id);
+      if (!voucher) {
+        res.status(404).json({ error: "Voucher not found" });
+        return;
+      }
+      const entries = await storage.getVoucherEntries(id);
+      res.json({ ...voucher, entries });
+    } catch (error) {
+      console.error('Error getting voucher:', error);
+      res.status(500).json({ message: "Failed to get voucher" });
     }
-    const entries = await storage.getVoucherEntries(id);
-    res.json({ ...voucher, entries });
   });
 
   app.post("/api/vouchers", async (req, res) => {
-    const parsed = insertVoucherSchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ error: parsed.error });
-      return;
+    try {
+      const parsed = insertVoucherSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ error: parsed.error });
+        return;
+      }
+      const voucher = await storage.createVoucher(parsed.data);
+      res.json(voucher);
+    } catch (error) {
+      console.error('Error creating voucher:', error);
+      res.status(500).json({ message: "Failed to create voucher" });
     }
-    const voucher = await storage.createVoucher(parsed.data);
-    res.json(voucher);
   });
 
   // Parties
   app.get("/api/parties", async (req, res) => {
-    const parties = await storage.getParties();
-    res.json(parties);
+    try {
+      const parties = await storage.getParties();
+      res.json(parties);
+    } catch (error) {
+      console.error('Error getting parties:', error);
+      res.status(500).json({ message: "Failed to get parties" });
+    }
   });
 
   app.post("/api/parties", async (req, res) => {
-    const parsed = insertPartySchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ error: parsed.error });
-      return;
+    try {
+      const parsed = insertPartySchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ error: parsed.error });
+        return;
+      }
+      const party = await storage.createParty(parsed.data);
+      res.json(party);
+    } catch (error) {
+      console.error('Error creating party:', error);
+      res.status(500).json({ message: "Failed to create party" });
     }
-    const party = await storage.createParty(parsed.data);
-    res.json(party);
   });
 
   // Donors
   app.get("/api/donors", async (req, res) => {
-    const donors = await storage.getDonors();
-    res.json(donors);
+    try {
+      const donors = await storage.getDonors();
+      res.json(donors);
+    } catch (error) {
+      console.error('Error getting donors:', error);
+      res.status(500).json({ message: "Failed to get donors" });
+    }
   });
 
   app.post("/api/donors", async (req, res) => {
-    const parsed = insertDonorSchema.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ error: parsed.error });
-      return;
+    try {
+      const parsed = insertDonorSchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ error: parsed.error });
+        return;
+      }
+      const donor = await storage.createDonor(parsed.data);
+      res.json(donor);
+    } catch (error) {
+      console.error('Error creating donor:', error);
+      res.status(500).json({ message: "Failed to create donor" });
     }
-    const donor = await storage.createDonor(parsed.data);
-    res.json(donor);
   });
 
   const httpServer = createServer(app);

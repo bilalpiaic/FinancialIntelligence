@@ -1,9 +1,10 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -27,6 +28,7 @@ import {
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
 import { insertVoucherSchema, VOUCHER_TYPES } from "@shared/schema";
+import {useEffect} from "react";
 
 interface VoucherFormProps {
   open: boolean;
@@ -47,9 +49,27 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
     },
   });
 
+  // Get the count of existing vouchers to generate the next number
+  const { data: vouchers } = useQuery({
+    queryKey: ["/api/vouchers"],
+    enabled: open, // Only fetch when dialog is open
+  });
+
+  // Generate next voucher number when form opens
+  useEffect(() => {
+    if (open && vouchers) {
+      const nextNumber = (vouchers.length + 1).toString().padStart(4, '0');
+      form.setValue('number', `V${nextNumber}`);
+    }
+  }, [open, vouchers, form]);
+
   const mutation = useMutation({
     mutationFn: async (values: any) => {
       const res = await apiRequest("POST", "/api/vouchers", values);
+      if (!res.ok) {
+        const error = await res.json();
+        throw new Error(error.message || 'Failed to create voucher');
+      }
       return res.json();
     },
     onSuccess: () => {
@@ -59,8 +79,9 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
         description: "Voucher created successfully",
       });
       onClose();
+      form.reset();
     },
-    onError: (error) => {
+    onError: (error: Error) => {
       toast({
         title: "Error",
         description: error.message,
@@ -74,6 +95,9 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create New Voucher</DialogTitle>
+          <DialogDescription>
+            Create a new voucher for Chiniot Dialysis & Medical Centre
+          </DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <form
@@ -114,7 +138,7 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
                 <FormItem>
                   <FormLabel>Number</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input {...field} disabled />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
