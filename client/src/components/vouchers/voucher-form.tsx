@@ -27,8 +27,8 @@ import {
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { queryClient, apiRequest } from "@/lib/queryClient";
-import { insertVoucherSchema, VOUCHER_TYPES } from "@shared/schema";
-import {useEffect} from "react";
+import { insertVoucherSchema, insertVoucherEntrySchema, VOUCHER_TYPES } from "@shared/schema";
+import { useEffect } from "react";
 
 interface VoucherFormProps {
   open: boolean;
@@ -37,6 +37,19 @@ interface VoucherFormProps {
 
 export default function VoucherForm({ open, onClose }: VoucherFormProps) {
   const { toast } = useToast();
+
+  // Fetch accounts for Dr/Cr selection
+  const { data: accounts } = useQuery({
+    queryKey: ["/api/accounts"],
+    enabled: open,
+  });
+
+  // Get existing vouchers for numbering
+  const { data: vouchers } = useQuery({
+    queryKey: ["/api/vouchers"],
+    enabled: open,
+  });
+
   const form = useForm({
     resolver: zodResolver(insertVoucherSchema),
     defaultValues: {
@@ -46,13 +59,9 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
       description: "",
       amount: "0",
       status: "DRAFT",
+      debitAccount: "",
+      creditAccount: "",
     },
-  });
-
-  // Get the count of existing vouchers to generate the next number
-  const { data: vouchers } = useQuery({
-    queryKey: ["/api/vouchers"],
-    enabled: open, // Only fetch when dialog is open
   });
 
   // Generate next voucher number when form opens
@@ -65,12 +74,47 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
 
   const mutation = useMutation({
     mutationFn: async (values: any) => {
-      const res = await apiRequest("POST", "/api/vouchers", values);
-      if (!res.ok) {
-        const error = await res.json();
+      // First create the voucher
+      const voucherRes = await apiRequest("POST", "/api/vouchers", {
+        type: values.type,
+        number: values.number,
+        date: values.date,
+        description: values.description,
+        amount: values.amount,
+        status: values.status,
+      });
+
+      if (!voucherRes.ok) {
+        const error = await voucherRes.json();
         throw new Error(error.message || 'Failed to create voucher');
       }
-      return res.json();
+
+      const voucher = await voucherRes.json();
+
+      // Then create the entries
+      const entries = [
+        {
+          voucherId: voucher.id,
+          accountId: parseInt(values.debitAccount),
+          debit: values.amount,
+          credit: "0",
+        },
+        {
+          voucherId: voucher.id,
+          accountId: parseInt(values.creditAccount),
+          debit: "0",
+          credit: values.amount,
+        },
+      ];
+
+      // Create both entries
+      await Promise.all(
+        entries.map(entry =>
+          apiRequest("POST", "/api/voucher-entries", entry)
+        )
+      );
+
+      return voucher;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["/api/vouchers"] });
@@ -171,6 +215,60 @@ export default function VoucherForm({ open, onClose }: VoucherFormProps) {
                       onChange={(e) => field.onChange(e.target.value)}
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="debitAccount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Debit Account</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select debit account" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {accounts?.map((account) => (
+                        <SelectItem key={account.id} value={account.id.toString()}>
+                          {account.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="creditAccount"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Credit Account</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select credit account" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {accounts?.map((account) => (
+                        <SelectItem key={account.id} value={account.id.toString()}>
+                          {account.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

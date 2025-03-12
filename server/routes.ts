@@ -1,8 +1,7 @@
 import type { Express } from "express";
 import { createServer } from "http";
 import { storage } from "./storage";
-import { insertAccountSchema, insertVoucherSchema, insertPartySchema, insertDonorSchema } from "@shared/schema";
-import { z } from "zod";
+import { insertAccountSchema, insertVoucherSchema, insertVoucherEntrySchema, insertPartySchema, insertDonorSchema } from "@shared/schema";
 
 export async function registerRoutes(app: Express) {
   // Accounts
@@ -70,6 +69,22 @@ export async function registerRoutes(app: Express) {
     } catch (error) {
       console.error('Error creating voucher:', error);
       res.status(500).json({ message: "Failed to create voucher" });
+    }
+  });
+
+  // Voucher Entries
+  app.post("/api/voucher-entries", async (req, res) => {
+    try {
+      const parsed = insertVoucherEntrySchema.safeParse(req.body);
+      if (!parsed.success) {
+        res.status(400).json({ error: parsed.error });
+        return;
+      }
+      const entry = await storage.createVoucherEntry(parsed.data);
+      res.json(entry);
+    } catch (error) {
+      console.error('Error creating voucher entry:', error);
+      res.status(500).json({ message: "Failed to create voucher entry" });
     }
   });
 
